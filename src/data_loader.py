@@ -31,10 +31,10 @@ def load_all_documents_from_directory(directory_path: str) -> Dict[str, List[Any
 
     for file_type, loader_cls in File_type_and_loaders.items():
 
-        #if folder type does not exist, skip to next file type
         file_type_directory = base_directory / f"{file_type}_files"
         print(file_type_directory)
 
+        #if folder type does not exist, skip to next file type
         if not file_type_directory.is_dir():
             print(f"Directory for {file_type} files does not exist. Skipping.")
             continue
