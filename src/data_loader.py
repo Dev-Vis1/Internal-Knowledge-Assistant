@@ -1,17 +1,12 @@
 from pathlib import Path
 import os
-from typing import List, Dict, Any
+from typing import Dict, Any
 from langchain_community.document_loaders import (
-    DirectoryLoader,
-    PyPDFLoader,
     PyMuPDFLoader,
     TextLoader,
     CSVLoader,
     Docx2txtLoader,
-    UnstructuredHTMLLoader as HTMLLoader,
     UnstructuredPowerPointLoader as PPTXLoader,
-    SQLDatabaseLoader,
-    JSONLoader,
 )
 
 File_type_and_loaders = {
@@ -19,12 +14,12 @@ File_type_and_loaders = {
     "pdf": PyMuPDFLoader,
     "csv": CSVLoader,
     "docx": Docx2txtLoader,
-    "html": HTMLLoader,
+    "html": TextLoader,
     "pptx": PPTXLoader,
-    "sql": SQLDatabaseLoader,
-    "json": JSONLoader,
+    "sql": TextLoader,
+    "json": TextLoader,
     "yaml": TextLoader,
-    "xml": TextLoader
+    "xml": TextLoader,
 
 }
 
