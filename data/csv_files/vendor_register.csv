@@ -1,0 +1,6 @@
+vendor_id,vendor_name,service_type,criticality,contract_owner,review_cycle,security_assessment_status
+V001,Orchid Cloud Hosting,Infrastructure,Critical,IT Operations,Annual,Approved
+V002,Bluefin Payroll,Payroll,High,People Operations,Annual,Approved
+V003,SlateCRM,Sales Platform,High,Sales Operations,Annual,Pending
+V004,Beacon Analytics,BI Tool,Medium,Data Platform,Biennial,Approved
+V005,Helix Messaging,Notification Service,Medium,Engineering,Annual,Approved

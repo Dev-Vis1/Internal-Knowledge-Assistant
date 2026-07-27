@@ -1,0 +1,27 @@
+Northstar Meridian Group Engineering Standards
+Owner: Engineering Productivity
+
+Architecture
+- Services must expose health, readiness, and metrics endpoints.
+- API changes require backward compatibility for one minor version.
+- Design docs are required for medium and high complexity changes.
+
+Code Quality
+- Pull requests require at least one reviewer from the owning team.
+- Critical paths require unit tests and integration tests.
+- Static analysis checks must pass before merge.
+
+Reliability
+- Service-level objective target: 99.9% monthly availability for customer-facing APIs.
+- Error budgets are reviewed weekly.
+- Production incidents require post-incident analysis within 5 business days.
+
+Security
+- Secrets must be stored in approved secret managers.
+- Libraries must be scanned for vulnerabilities before release.
+- Elevated privileges are time-bound and audited.
+
+Release Management
+- Changes are deployed via CI/CD with traceable build artifacts.
+- Rollback plan is required for production releases.
+- Feature flags are preferred for staged rollouts.

@@ -1,0 +1,13 @@
+business_units:
+  - name: Product and Engineering
+    leader: Chief Technology Officer
+    focus: platform delivery, reliability, and innovation
+  - name: Customer Success
+    leader: Chief Operating Officer
+    focus: onboarding, support quality, and renewals
+  - name: Finance and Procurement
+    leader: Chief Financial Officer
+    focus: budgeting, spend governance, and vendor controls
+  - name: Legal and Compliance
+    leader: General Counsel
+    focus: contracts, privacy obligations, and regulatory compliance

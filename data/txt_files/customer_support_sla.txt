@@ -1,0 +1,24 @@
+Customer Support SLA and Escalation Matrix
+Owner: Customer Success Operations
+
+Support Tiers
+- Tier 1: General usage issues and account questions.
+- Tier 2: Product defects and reproducible incidents.
+- Tier 3: Engineering-led investigation for systemic or complex failures.
+
+Severity Definitions
+- Sev 1: Full outage or data unavailability in production.
+- Sev 2: Major feature degradation with workaround unavailable.
+- Sev 3: Non-critical feature issue with workaround available.
+- Sev 4: Cosmetic issue or enhancement request.
+
+Response Targets
+- Sev 1: Initial response within 15 minutes, updates every 30 minutes.
+- Sev 2: Initial response within 1 hour, updates every 2 hours.
+- Sev 3: Initial response within 4 business hours.
+- Sev 4: Initial response within 2 business days.
+
+Escalation
+- Sev 1 automatically notifies Incident Commander, Security, and Product Leadership.
+- Regional customer impact requires local communications owner assignment.
+- Executive summary sent within 24 hours after resolution.

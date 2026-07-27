@@ -1,0 +1,8 @@
+employee_id,full_name,department,role,manager,location,start_date
+E001,Aisha Khan,Information Security,Security Analyst,Daniel Wu,Chicago,2022-03-14
+E002,Liam Carter,Engineering,Senior Backend Engineer,Sofia Ramos,Dublin,2021-11-02
+E003,Nora Ibrahim,Customer Success,Support Manager,Elena Reed,Singapore,2020-08-19
+E004,Victor Mensah,Finance,Financial Controller,Jon Park,Chicago,2019-05-06
+E005,Grace Novak,People Operations,HR Business Partner,Leah Torres,Dublin,2023-01-09
+E006,Ryan Patel,Legal,Privacy Counsel,Hannah Mills,Chicago,2021-02-25
+E007,Helena Ortiz,Product,Product Manager,Marcus Allen,Singapore,2022-09-12

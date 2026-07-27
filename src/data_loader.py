@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from typing import Dict, Any
+from typing import List, Dict, Any
 from langchain_community.document_loaders import (
     PyMuPDFLoader,
     TextLoader,
@@ -24,15 +24,7 @@ File_type_and_loaders = {
 }
 
 def load_all_documents_from_directory(directory_path: str) -> Dict[str, List[Any]]:
-    """
-    Loads all documents from the specified directory and returns them as a list of document objects.
 
-    Args:
-        directory_path (str): Path to the directory containing documents.
-
-    Returns:
-        Dict[str, List[Dict[str, Any]]]: A dictionary mapping file types to lists of loaded documents.
-    """
     #loaders for each file type
     loaded_documents = {}
     base_directory = Path(directory_path).resolve()

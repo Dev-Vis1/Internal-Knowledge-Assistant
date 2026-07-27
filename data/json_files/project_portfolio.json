@@ -1,0 +1,26 @@
+{
+  "portfolio_owner": "Transformation Office",
+  "projects": [
+    {
+      "id": "PRJ-101",
+      "name": "Unified Support Console",
+      "status": "On Track",
+      "budget_usd": 420000,
+      "department": "Customer Success"
+    },
+    {
+      "id": "PRJ-202",
+      "name": "Identity Hardening Phase 2",
+      "status": "At Risk",
+      "budget_usd": 310000,
+      "department": "Information Security"
+    },
+    {
+      "id": "PRJ-303",
+      "name": "Forecast Automation",
+      "status": "On Track",
+      "budget_usd": 190000,
+      "department": "Finance"
+    }
+  ]
+}

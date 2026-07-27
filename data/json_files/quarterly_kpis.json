@@ -1,0 +1,34 @@
+{
+  "company": "Northstar Meridian Group",
+  "period": "2026-Q2",
+  "kpis": [
+    {
+      "name": "Net Revenue Retention",
+      "value": 1.07,
+      "unit": "ratio",
+      "target": 1.05,
+      "owner": "Finance"
+    },
+    {
+      "name": "Average First Response Time",
+      "value": 28,
+      "unit": "minutes",
+      "target": 30,
+      "owner": "Customer Success"
+    },
+    {
+      "name": "Critical Vulnerability Remediation SLA",
+      "value": 0.94,
+      "unit": "ratio",
+      "target": 0.95,
+      "owner": "Information Security"
+    },
+    {
+      "name": "Production Change Failure Rate",
+      "value": 0.09,
+      "unit": "ratio",
+      "target": 0.1,
+      "owner": "Engineering"
+    }
+  ]
+}

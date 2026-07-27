@@ -1,0 +1,6 @@
+risk_id,domain,description,likelihood,impact,owner,mitigation_status,last_review
+R-001,Security,Phishing attempts against privileged users,High,High,CISO,In Progress,2026-07-15
+R-002,Operations,Third-party outage affecting login services,Medium,High,COO,Planned,2026-07-18
+R-003,Compliance,Delayed privacy impact assessments,Medium,Medium,Privacy Office,In Progress,2026-07-10
+R-004,Product,Unclear API deprecation lifecycle,Low,Medium,CTO,Open,2026-07-08
+R-005,Finance,Budget overrun in cloud spend,Medium,Medium,CFO,Mitigated,2026-07-20

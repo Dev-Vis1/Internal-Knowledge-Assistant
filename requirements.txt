@@ -9,4 +9,5 @@ chromadb
 faiss-cpu
 langchain-groq
 python-dotenv
+streamlit
 pickle5

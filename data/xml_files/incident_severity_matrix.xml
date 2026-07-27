@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidentSeverityMatrix>
+  <severity level="1" name="Critical">
+    <criteria>Complete production outage, data loss, or severe security compromise</criteria>
+    <responseTarget>15 minutes</responseTarget>
+  </severity>
+  <severity level="2" name="High">
+    <criteria>Major feature unavailable with broad customer impact</criteria>
+    <responseTarget>1 hour</responseTarget>
+  </severity>
+  <severity level="3" name="Medium">
+    <criteria>Partial degradation with workaround available</criteria>
+    <responseTarget>4 business hours</responseTarget>
+  </severity>
+  <severity level="4" name="Low">
+    <criteria>Minor issue or documentation correction</criteria>
+    <responseTarget>2 business days</responseTarget>
+  </severity>
+</incidentSeverityMatrix>

@@ -1,0 +1,21 @@
+services:
+  - name: identity-service
+    owner: security-platform
+    tier: critical
+    endpoint: /api/v1/identity
+    slo: 99.95
+  - name: billing-service
+    owner: finance-systems
+    tier: high
+    endpoint: /api/v1/billing
+    slo: 99.9
+  - name: support-case-service
+    owner: customer-success-engineering
+    tier: high
+    endpoint: /api/v1/cases
+    slo: 99.9
+  - name: analytics-export-service
+    owner: data-platform
+    tier: medium
+    endpoint: /api/v1/exports
+    slo: 99.5
