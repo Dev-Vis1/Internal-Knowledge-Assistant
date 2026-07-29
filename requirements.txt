@@ -10,3 +10,4 @@ faiss-cpu
 langchain-groq
 python-dotenv
 streamlit
+dvc
