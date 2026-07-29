@@ -2,6 +2,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from typing import List, Dict, Any
+from data_loader import load_all_documents_from_directory
 
 class EmbeddingPipeline:
 
@@ -51,3 +52,10 @@ class EmbeddingPipeline:
         except Exception as e:
             print(f"Failed to generate embeddings. Error: {e}")
             raise
+
+if __name__ == "__main__":
+    all_documents = load_all_documents_from_directory("./data")
+    pipeline = EmbeddingPipeline()
+    chunks = pipeline.split_documents(all_documents)
+    texts = [chunk.page_content for chunk in chunks]
+    embeddings = pipeline.generate_embeddings(texts)
