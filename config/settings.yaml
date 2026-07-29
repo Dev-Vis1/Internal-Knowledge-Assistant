@@ -1,0 +1,7 @@
+project_name: internal-knowledge-assistant
+
+data_dir: ./data
+persist_dir: ./faiss_store
+embedding_model: all-MiniLM-L6-v2
+chunk_size: 500
+chunk_overlap: 20
