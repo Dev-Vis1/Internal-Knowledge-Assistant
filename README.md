@@ -7,7 +7,7 @@ A lightweight Retrieval-Augmented Generation project for querying internal docum
 - Loads company documents from local folders
 - Splits text into chunks
 - Generates embeddings using Sentence Transformers
-- Stores vectors in ChromaDB
+- Stores vectors in Faiss & ChromaDB
 - Retrieves relevant context for LLM responses
 
 ## Tech stack
@@ -15,7 +15,7 @@ A lightweight Retrieval-Augmented Generation project for querying internal docum
 - Python 3.12+
 - LangChain
 - Sentence Transformers
-- ChromaDB
+- ChromaDB, Faiss
 - Groq API for LLM inference
 
 ## Project structure
