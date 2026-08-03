@@ -2,9 +2,11 @@ from pathlib import Path
 import streamlit as st
 
 from src.search import RAGSearch
+from src.settings import load_settings
 
 
-DATA_DIR = Path("./data")
+SETTINGS = load_settings()
+DATA_DIR = SETTINGS.data_dir
 LOGO_PATH = Path("./assets/northstar_logo.svg")
 SUPPORTED_EXTENSIONS = {
     ".pdf": "pdf_files",
@@ -27,7 +29,14 @@ def ensure_data_folders() -> None:
 
 @st.cache_resource
 def get_rag_service() -> RAGSearch:
-    return RAGSearch(data_dir="./data", persist_dir="faiss_store")
+    return RAGSearch(
+        data_dir=str(SETTINGS.data_dir),
+        persist_dir=str(SETTINGS.persist_dir),
+        embedding_model=SETTINGS.embedding_model,
+        llm_model=SETTINGS.llm_model,
+        chunk_size=SETTINGS.chunk_size,
+        chunk_overlap=SETTINGS.chunk_overlap,
+    )
 
 
 def save_uploaded_files(files) -> tuple[int, int, list[str]]:
@@ -229,7 +238,7 @@ def render_user_portal() -> None:
 
 
 def main() -> None:
-    st.set_page_config(page_title="Internal Knowledge Assistant", page_icon=":material/hub:", layout="wide")
+    st.set_page_config(page_title=SETTINGS.project_name, page_icon=":material/hub:", layout="wide")
     ensure_data_folders()
     apply_custom_style()
 

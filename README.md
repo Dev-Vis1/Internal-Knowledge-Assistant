@@ -64,6 +64,8 @@ Or with Docker Compose:
 docker compose up --build
 ```
 
+The app will be available at `http://localhost:8501` and MLflow UI at `http://localhost:5000`.
+
 ## Notes
 
 - Keep input files inside folders like data/pdf_files and data/txt_files.

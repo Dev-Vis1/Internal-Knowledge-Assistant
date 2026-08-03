@@ -3,5 +3,10 @@ project_name: internal-knowledge-assistant
 data_dir: ./data
 persist_dir: ./faiss_store
 embedding_model: all-MiniLM-L6-v2
+llm_model: llama-3.1-8b-instant
 chunk_size: 500
 chunk_overlap: 20
+
+mlflow_enabled: true
+mlflow_tracking_uri: sqlite:///mlflow.db
+mlflow_experiment_name: internal-knowledge-assistant

@@ -8,3 +8,13 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: streamlit run app/main.py --server.port=8501 --server.address=0.0.0.0
+
+  mlflow:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: mlflow ui --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///app/mlflow.db

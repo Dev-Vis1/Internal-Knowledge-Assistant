@@ -11,3 +11,5 @@ langchain-groq
 python-dotenv
 streamlit
 dvc
+pyyaml
+mlflow

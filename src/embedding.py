@@ -2,7 +2,11 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from typing import List, Dict, Any
-from data_loader import load_all_documents_from_directory
+
+try:
+    from src.data_loader import load_all_documents_from_directory
+except ModuleNotFoundError:
+    from data_loader import load_all_documents_from_directory
 
 class EmbeddingPipeline:
 

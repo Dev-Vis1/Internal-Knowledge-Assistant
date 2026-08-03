@@ -1,16 +1,25 @@
 import os
+import time
+from contextlib import nullcontext
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from typing import Any, Dict, List
 
 try:
+    import mlflow
+except ModuleNotFoundError:
+    mlflow = None
+
+try:
     from src.vectorstore import FaissVectorStore
     from src.data_loader import load_all_documents_from_directory
     from src.embedding import EmbeddingPipeline
+    from src.settings import load_settings
 except ModuleNotFoundError:
     from vectorstore import FaissVectorStore
     from data_loader import load_all_documents_from_directory
     from embedding import EmbeddingPipeline
+    from settings import load_settings
 
 load_dotenv()
 
@@ -18,17 +27,25 @@ load_dotenv()
 class RAGSearch:
     def __init__(
         self,
-        data_dir: str = "./data",
-        persist_dir: str = "faiss_store",
-        embedding_model: str = "all-MiniLM-L6-v2",
-        llm_model: str = "llama-3.1-8b-instant",
-        chunk_size: int = 500,
-        chunk_overlap: int = 20,
+        data_dir: str | None = None,
+        persist_dir: str | None = None,
+        embedding_model: str | None = None,
+        llm_model: str | None = None,
+        chunk_size: int | None = None,
+        chunk_overlap: int | None = None,
     ):
-        self.data_dir = data_dir
-        self.persist_dir = persist_dir
-        self.embedding_model = embedding_model
-        self.llm_model = llm_model
+        settings = load_settings()
+        self.project_name = settings.project_name
+
+        self.data_dir = data_dir or str(settings.data_dir)
+        self.persist_dir = persist_dir or str(settings.persist_dir)
+        self.embedding_model = embedding_model or settings.embedding_model
+        self.llm_model = llm_model or settings.llm_model
+        resolved_chunk_size = chunk_size if chunk_size is not None else settings.chunk_size
+        resolved_chunk_overlap = chunk_overlap if chunk_overlap is not None else settings.chunk_overlap
+        self.mlflow_enabled = bool(settings.mlflow_enabled and mlflow is not None)
+        self.mlflow_tracking_uri = settings.mlflow_tracking_uri
+        self.mlflow_experiment_name = settings.mlflow_experiment_name
 
         self.vectorstore = FaissVectorStore(
             persist_dir=self.persist_dir,
@@ -36,9 +53,19 @@ class RAGSearch:
         )
         self.embedding_pipeline = EmbeddingPipeline(
             model_name=self.embedding_model,
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
+            chunk_size=resolved_chunk_size,
+            chunk_overlap=resolved_chunk_overlap,
         )
+
+        if self.mlflow_enabled:
+            try:
+                mlflow.set_tracking_uri(self.mlflow_tracking_uri)
+                mlflow.set_experiment(self.mlflow_experiment_name)
+            except Exception:
+                self.mlflow_enabled = False
+                print("[WARN] MLflow setup failed. Tracking is disabled.")
+        elif mlflow is None:
+            print("[WARN] MLflow is not installed. Tracking is disabled.")
 
         self.llm = None
         groq_api_key = os.getenv("GROQ_API_KEY")
@@ -53,6 +80,11 @@ class RAGSearch:
         else:
             print("[WARN] GROQ_API_KEY not found. LLM answering is disabled.")
 
+    def _mlflow_run(self, run_name: str):
+        if not self.mlflow_enabled:
+            return nullcontext()
+        return mlflow.start_run(run_name=run_name)
+
     def _index_paths(self) -> tuple[str, str]:
         faiss_path = os.path.join(self.persist_dir, "faiss.index")
         meta_path = os.path.join(self.persist_dir, "metadata.pkl")
@@ -64,6 +96,7 @@ class RAGSearch:
 
     def build_index(self, save: bool = True) -> None:
         """Load documents, split into chunks, and build a persisted FAISS index."""
+        started = time.perf_counter()
         docs_by_type = load_all_documents_from_directory(self.data_dir)
         chunks = self.embedding_pipeline.split_documents(docs_by_type)
         texts = [chunk.page_content for chunk in chunks]
@@ -72,6 +105,24 @@ class RAGSearch:
         self.vectorstore.add_texts(texts=texts, metadatas=metadatas)
         if save:
             self.vectorstore.save()
+
+        if self.mlflow_enabled:
+            total_documents = sum(len(items) for items in docs_by_type.values())
+            elapsed = time.perf_counter() - started
+            try:
+                with self._mlflow_run("build-index"):
+                    mlflow.set_tag("stage", "index_build")
+                    mlflow.log_param("project_name", self.project_name)
+                    mlflow.log_param("data_dir", self.data_dir)
+                    mlflow.log_param("persist_dir", self.persist_dir)
+                    mlflow.log_param("embedding_model", self.embedding_model)
+                    mlflow.log_param("chunk_size", self.embedding_pipeline.chunk_size)
+                    mlflow.log_param("chunk_overlap", self.embedding_pipeline.chunk_overlap)
+                    mlflow.log_metric("documents_loaded", total_documents)
+                    mlflow.log_metric("chunks_created", len(chunks))
+                    mlflow.log_metric("elapsed_seconds", elapsed)
+            except Exception:
+                print("[WARN] MLflow logging failed during index build.")
 
     def load_or_build_index(self, force_rebuild: bool = False) -> None:
         """Load persisted index if available, otherwise build and save it."""
@@ -84,13 +135,33 @@ class RAGSearch:
         else:
             self.build_index(save=True)
 
-    def retrieve(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    def retrieve(self, query: str, top_k: int = 5, log_to_mlflow: bool = True) -> List[Dict[str, Any]]:
         """Retrieve top-k most similar chunks for the query."""
-        return self.vectorstore.query(query_text=query, top_k=top_k)
+        started = time.perf_counter()
+        results = self.vectorstore.query(query_text=query, top_k=top_k)
+
+        if self.mlflow_enabled and log_to_mlflow:
+            elapsed = time.perf_counter() - started
+            scores = [float(item.get("score", 0.0)) for item in results]
+            avg_score = sum(scores) / len(scores) if scores else 0.0
+            try:
+                with self._mlflow_run("retrieve"):
+                    mlflow.set_tag("stage", "retrieve")
+                    mlflow.log_param("project_name", self.project_name)
+                    mlflow.log_param("top_k", top_k)
+                    mlflow.log_metric("query_length", len(query))
+                    mlflow.log_metric("results_returned", len(results))
+                    mlflow.log_metric("avg_score", avg_score)
+                    mlflow.log_metric("elapsed_seconds", elapsed)
+            except Exception:
+                print("[WARN] MLflow logging failed during retrieval.")
+
+        return results
 
     def answer(self, query: str, top_k: int = 5) -> str:
         """Generate an answer from retrieved context using Groq, if configured."""
-        results = self.retrieve(query=query, top_k=top_k)
+        started = time.perf_counter()
+        results = self.retrieve(query=query, top_k=top_k, log_to_mlflow=False)
         context_chunks = [r.get("metadata", {}).get("text", "") for r in results]
         context = "\n\n".join([chunk for chunk in context_chunks if chunk])
 
@@ -111,7 +182,25 @@ class RAGSearch:
             "Answer:"
         )
         response = self.llm.invoke(prompt)
-        return response.content
+        answer_text = response.content
+
+        if self.mlflow_enabled:
+            elapsed = time.perf_counter() - started
+            try:
+                with self._mlflow_run("answer"):
+                    mlflow.set_tag("stage", "answer")
+                    mlflow.log_param("project_name", self.project_name)
+                    mlflow.log_param("llm_model", self.llm_model)
+                    mlflow.log_param("top_k", top_k)
+                    mlflow.log_metric("query_length", len(query))
+                    mlflow.log_metric("results_returned", len(results))
+                    mlflow.log_metric("context_chars", len(context))
+                    mlflow.log_metric("answer_chars", len(answer_text))
+                    mlflow.log_metric("elapsed_seconds", elapsed)
+            except Exception:
+                print("[WARN] MLflow logging failed during answer generation.")
+
+        return answer_text
 
     def search_and_summarize(self, query: str, top_k: int = 5) -> str:
         """Backward-compatible wrapper for older call sites."""
@@ -119,7 +208,7 @@ class RAGSearch:
 
 # Example usage
 if __name__ == "__main__":
-    rag_search = RAGSearch(data_dir="./data", persist_dir="faiss_store")
+    rag_search = RAGSearch()
     rag_search.load_or_build_index()
 
     query = "What is the information security policy?"
